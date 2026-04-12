@@ -561,6 +561,7 @@ const getAvatarBg = (avatarKey) => {
   const createRoom = () => {
     if (!name) return;
   
+    
     socket.emit("create_room", {
       name,
       avatar: avatars[avatarIndex],
@@ -572,6 +573,7 @@ const getAvatarBg = (avatarKey) => {
   const joinRoom = () => {
     if (!name || !joinCode) return;
     setJoinError("");
+    
     socket.emit("join_room", {
       roomCode: joinCode.toUpperCase(),
       name,
@@ -783,6 +785,7 @@ const getAvatarBg = (avatarKey) => {
             </button>
   
             <button
+            
               onClick={() => {
                 playClick();
                 setMode("join");
@@ -1558,22 +1561,13 @@ const getAvatarBg = (avatarKey) => {
             </div>
 
             <button
-              onMouseEnter={(e) => {
-                if (!isMobile) {
-                  e.currentTarget.style.transform = "translateY(-4px) scale(1.03)";
-                  e.currentTarget.style.boxShadow = "0 8px 0 #111";
-                  e.currentTarget.style.filter = "brightness(1.1)";
-                }
+              type="button"
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                createRoom();
               }}
-              onMouseLeave={(e) => {
-                if (!isMobile) {
-                  e.currentTarget.style.transform = "translateY(0px) scale(1)";
-                  e.currentTarget.style.boxShadow = "0 4px 0 #111";
-                  e.currentTarget.style.filter = "brightness(1)";
-                }
-              }}
-              onClick={() => {
-                playClick();
+              onClick={(e) => {
+                e.preventDefault();
                 createRoom();
               }}
               style={{
@@ -1591,6 +1585,10 @@ const getAvatarBg = (avatarKey) => {
                 marginTop: 2,
                 textTransform: "uppercase",
                 letterSpacing: 0.4,
+                position: "relative",
+                zIndex: 50,
+                touchAction: "manipulation",
+                WebkitTapHighlightColor: "transparent",
               }}
             >
               ODAYI OLUŞTUR
@@ -3325,7 +3323,8 @@ players.forEach((p) => {
     <div
       style={{
         width: "100vw",
-        height: "100dvh",
+        minHeight: "100dvh",
+        height: "auto",
         fontFamily: "Arial",
         backgroundImage: `url(${currentQuestionBg})`,
         backgroundSize: "cover",
@@ -3334,7 +3333,9 @@ players.forEach((p) => {
         backgroundRepeat: "no-repeat",
         padding: isMobile ? "12px 10px" : "24px 28px",
         boxSizing: "border-box",
-        overflow: "hidden",
+        overflowX: "hidden",
+        overflowY: isMobile ? "auto" : "hidden",
+        WebkitOverflowScrolling: "touch",
       }}
     >
       {currentPlayer && (
@@ -3848,20 +3849,23 @@ players.forEach((p) => {
   if (isWordHuntSelections) {
     return (
       <div
-        style={{
-          width: "100vw",
-          height: "100dvh",
-          fontFamily: "Arial",
-          backgroundImage: `url(${currentQuestionBg})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center top",
-          position: "relative",
-          backgroundRepeat: "no-repeat",
-          padding: isMobile ? "12px 10px" : "24px 28px",
-          boxSizing: "border-box",
-          overflow: "hidden",
-        }}
-      >
+  style={{
+    width: "100vw",
+    minHeight: "100dvh",
+    height: "auto",
+    fontFamily: "Arial",
+    backgroundImage: `url(${currentQuestionBg})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center top",
+    position: "relative",
+    backgroundRepeat: "no-repeat",
+    padding: isMobile ? "12px 10px" : "24px 28px",
+    boxSizing: "border-box",
+    overflowX: "hidden",
+    overflowY: isMobile ? "auto" : "hidden",
+    WebkitOverflowScrolling: "touch",
+  }}
+>
         {currentPlayer && (
           <div
             style={{
@@ -4182,20 +4186,23 @@ players.forEach((p) => {
 
   return (
     <div
-      style={{
-        width: "100vw",
-        height: "100dvh",
-        fontFamily: "Arial",
-        backgroundImage: `url(${currentQuestionBg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center top",
-        position: "relative",
-        backgroundRepeat: "no-repeat",
-        padding: isMobile ? "12px 10px" : "24px 28px",
-        boxSizing: "border-box",
-        overflow: "hidden",
-      }}
-    >
+  style={{
+    width: "100vw",
+    minHeight: "100dvh",
+    height: "auto",
+    fontFamily: "Arial",
+    backgroundImage: `url(${currentQuestionBg})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center top",
+    position: "relative",
+    backgroundRepeat: "no-repeat",
+    padding: isMobile ? "12px 10px" : "24px 28px",
+    boxSizing: "border-box",
+    overflowX: "hidden",
+    overflowY: isMobile ? "auto" : "hidden",
+    WebkitOverflowScrolling: "touch",
+  }}
+>
       {currentPlayer && (
         <div
           style={{
@@ -4764,20 +4771,23 @@ if (gameStarted && phase === "MOLE_VOTING") {
 
   return (
     <div
-      style={{
-        width: "100vw",
-        height: "100dvh",
-        fontFamily: "Arial",
-        backgroundImage: `url(${currentQuestionBg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center top",
-        position: "relative",
-        backgroundRepeat: "no-repeat",
-        padding: isMobile ? "12px 10px" : "24px 28px",
-        boxSizing: "border-box",
-        overflow: "hidden",
-      }}
-    >
+  style={{
+    width: "100vw",
+    minHeight: "100dvh",
+    height: "auto",
+    fontFamily: "Arial",
+    backgroundImage: `url(${currentQuestionBg})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center top",
+    position: "relative",
+    backgroundRepeat: "no-repeat",
+    padding: isMobile ? "12px 10px" : "24px 28px",
+    boxSizing: "border-box",
+    overflowX: "hidden",
+    overflowY: isMobile ? "auto" : "hidden",
+    WebkitOverflowScrolling: "touch",
+  }}
+>
       {currentPlayer && (
         <div
           style={{
@@ -4915,7 +4925,7 @@ if (gameStarted && phase === "MOLE_VOTING") {
           display: "flex",
           justifyContent: "center",
           alignItems: "flex-start",
-          paddingTop: isMobile ? 230 : 170,
+          paddingTop: isMobile ? 230 : 270,
           boxSizing: "border-box",
         }}
       >
@@ -5134,20 +5144,23 @@ players.forEach((p) => {
 
   return (
     <div
-      style={{
-        width: "100vw",
-        height: "100dvh",
-        fontFamily: "Arial",
-        backgroundImage: `url(${currentQuestionBg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center top",
-        position: "relative",
-        backgroundRepeat: "no-repeat",
-        padding: isMobile ? "12px 10px" : "24px 28px",
-        boxSizing: "border-box",
-        overflow: "hidden",
-      }}
-    >
+  style={{
+    width: "100vw",
+    minHeight: "100dvh",
+    height: "auto",
+    fontFamily: "Arial",
+    backgroundImage: `url(${currentQuestionBg})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center top",
+    position: "relative",
+    backgroundRepeat: "no-repeat",
+    padding: isMobile ? "12px 10px" : "24px 28px",
+    boxSizing: "border-box",
+    overflowX: "hidden",
+    overflowY: isMobile ? "auto" : "hidden",
+    WebkitOverflowScrolling: "touch",
+  }}
+>
       {currentPlayer && (
         <div
           style={{
@@ -5553,20 +5566,23 @@ if (gameStarted && phase === "WORD_HUNT") {
 
   return (
     <div
-      style={{
-        width: "100vw",
-        height: "100dvh",
-        backgroundImage: `url(${currentQuestionBg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center top",
-        backgroundRepeat: "no-repeat",
-        fontFamily: "Arial",
-        position: "relative",
-        overflow: "hidden",
-        padding: isMobile ? "12px 10px" : "24px 28px",
-        boxSizing: "border-box",
-      }}
-    >
+  style={{
+    width: "100vw",
+    minHeight: "100dvh",
+    height: "auto",
+    backgroundImage: `url(${currentQuestionBg})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center top",
+    backgroundRepeat: "no-repeat",
+    fontFamily: "Arial",
+    position: "relative",
+    overflowX: "hidden",
+    overflowY: isMobile ? "auto" : "hidden",
+    WebkitOverflowScrolling: "touch",
+    padding: isMobile ? "12px 10px" : "24px 28px",
+    boxSizing: "border-box",
+  }}
+>
       {/* SOL ÜST AVATAR */}
       <div
         style={{
@@ -5972,20 +5988,23 @@ if (gameStarted && questionType === "select_player") {
 
   return (
     <div
-      style={{
-        width: "100vw",
-        height: "100dvh",
-        fontFamily: "Arial",
-        backgroundImage: `url(${currentQuestionBg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center top",
-        position: "relative",
-        backgroundRepeat: "no-repeat",
-        padding: isMobile ? "12px 10px" : "24px 28px",
-        boxSizing: "border-box",
-        overflow: "hidden",
-      }}
-    >
+  style={{
+    width: "100vw",
+    minHeight: "100dvh",
+    height: "auto",
+    fontFamily: "Arial",
+    backgroundImage: `url(${currentQuestionBg})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center top",
+    position: "relative",
+    backgroundRepeat: "no-repeat",
+    padding: isMobile ? "12px 10px" : "24px 28px",
+    boxSizing: "border-box",
+    overflowX: "hidden",
+    overflowY: isMobile ? "auto" : "hidden",
+    WebkitOverflowScrolling: "touch",
+  }}
+>
       {currentPlayer && (
         <div
           style={{
@@ -6107,7 +6126,7 @@ if (gameStarted && questionType === "select_player") {
             display: "flex",
             justifyContent: "center",
             alignItems: "flex-start",
-            paddingTop: isMobile ? 220 : 300,
+            paddingTop: isMobile ? 220 : 400,
             boxSizing: "border-box",
           }}
         >

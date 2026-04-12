@@ -332,9 +332,9 @@ function startCountdown(roomCode, seconds, nextPhase, onComplete) {
 }
 
 function runNormalRoundFlow(roomCode) {
-  startCountdown(roomCode, 15, "QUESTION", (questionRoom) => {
-    startCountdown(roomCode, 15, "SHOW_SELECTIONS", (selectionRoom) => {
-      startCountdown(roomCode, 15, "MOLE_VOTING", (moleRoom) => {
+  startCountdown(roomCode, 30, "QUESTION", (questionRoom) => {
+    startCountdown(roomCode, 20, "SHOW_SELECTIONS", (selectionRoom) => {
+      startCountdown(roomCode, 40, "MOLE_VOTING", (moleRoom) => {
         const moleId = moleRoom.moleId;
 
         moleRoom.players.forEach((player) => {
@@ -540,7 +540,6 @@ if (wordHuntTimers[roomCode]) {
     
     if (existingDisconnectedPlayer) {
       existingDisconnectedPlayer.id = socket.id;
-      existingDisconnectedPlayer.avatar = avatar;
       existingDisconnectedPlayer.connected = true;
     
       socket.join(roomCode);
@@ -763,8 +762,8 @@ room.players.push({
 
     io.to(roomCode).emit("room_update", room);
 
-    startCountdown(roomCode, 15, "SHOW_SELECTIONS", (selectionRoom) => {
-      startCountdown(roomCode, 15, "MOLE_VOTING", (moleRoom) => {
+    startCountdown(roomCode, 20, "SHOW_SELECTIONS", (selectionRoom) => {
+      startCountdown(roomCode, 40, "MOLE_VOTING", (moleRoom) => {
         const moleId = moleRoom.moleId;
 
         moleRoom.players.forEach((player) => {
