@@ -6,14 +6,23 @@ const wordHuntTimers = {};
 const countdownTimers = {};
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://skalacraft.com", "http://localhost:5173"],
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: ["https://skalacraft.com", "http://localhost:5173"],
+    methods: ["GET", "POST"],
+    credentials: true,
   },
+  transports: ["websocket", "polling"],
 });
 
 const rooms = {};
