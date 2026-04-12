@@ -19,14 +19,14 @@ const io = new Server(server, {
 const rooms = {};
 const socketToRoom = {};
 const avatarPool = [
-  "/avatars/avatar1.png",
-  "/avatars/avatar2.png",
-  "/avatars/avatar3.png",
-  "/avatars/avatar4.png",
-  "/avatars/avatar5.png",
-  "/avatars/avatar6.png",
-  "/avatars/avatar7.png",
-  "/avatars/avatar8.png",
+  "avatar1",
+  "avatar2",
+  "avatar3",
+  "avatar4",
+  "avatar5",
+  "avatar6",
+  "avatar7",
+  "avatar8",
 ];
 const questionPools = {
   gosteri_zamani: [
@@ -512,9 +512,13 @@ if (wordHuntTimers[roomCode]) {
     io.to(roomCode).emit("room_update", room);
   });
   socket.on("join_room", ({ roomCode, name, avatar }) => {
-    console.log("Join request:", roomCode, name);
-    const room = rooms[roomCode];
-    if (!room) return;
+  console.log("Join request:", roomCode, name);
+  const room = rooms[roomCode];
+
+  if (!room) {
+    socket.emit("join_error", { message: "ODA BULUNAMADI" });
+    return;
+  }
     const connectedPlayersCount = room.players.filter((p) => p.connected !== false).length;
 
     if (connectedPlayersCount >= room.maxPlayers) {
@@ -559,7 +563,9 @@ const availableAvatars = avatarPool.filter(a => !usedAvatars.includes(a));
 
 // random seç
 const randomAvatar =
-  availableAvatars[Math.floor(Math.random() * availableAvatars.length)];
+  availableAvatars.length > 0
+    ? availableAvatars[Math.floor(Math.random() * availableAvatars.length)]
+    : avatarPool[0];
 
 // oyuncuyu ekle
 room.players.push({
@@ -577,8 +583,9 @@ room.players.push({
 });
     
     socket.join(roomCode);
+    socketToRoom[socket.id] = roomCode;
     socket.emit("join_success", { roomCode });
-    
+
     io.to(roomCode).emit("room_update", room);
   
     
@@ -625,16 +632,17 @@ room.players.push({
     const player = room.players.find(p => p.id === socket.id);
     if (!player) return;
   
-    // odadaki kullanılan avatarlar
-    const usedAvatars = room.players.map(p => p.avatar);
-  
-    // boşta olan avatarlar + kendi avatarını da dahil et
+    const usedAvatars = room.players.map((p) => p.avatar);
+
     const availableAvatars = avatarPool.filter(
-      a => !usedAvatars.includes(a) || a === player.avatar
+      (a) => !usedAvatars.includes(a) || a === player.avatar
     );
-  
-    // mevcut avatarın indexi
+
     let currentIndex = availableAvatars.indexOf(player.avatar);
+
+    if (currentIndex === -1) {
+      currentIndex = 0;
+    }
   
     if (direction === "next") {
       currentIndex =

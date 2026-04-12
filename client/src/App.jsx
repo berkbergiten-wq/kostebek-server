@@ -114,23 +114,31 @@ function App() {
 
   const avatarColorMap = {
   "avatar1.png": "linear-gradient(180deg, #4ade80, #22c55e)",
-  "avatar1-mobile.png": "linear-gradient(180deg, #4ade80, #22c55e)",
   "avatar2.png": "linear-gradient(180deg, #ef4444, #dc2626)",
-  "avatar2-mobile.png": "linear-gradient(180deg, #ef4444, #dc2626)",
   "avatar3.png": "linear-gradient(180deg, #3b82f6, #2563eb)",
-  "avatar3-mobile.png": "linear-gradient(180deg, #3b82f6, #2563eb)",
   "avatar4.png": "linear-gradient(180deg, #a855f7, #7c3aed)",
-  "avatar4-mobile.png": "linear-gradient(180deg, #a855f7, #7c3aed)",
   "avatar5.png": "linear-gradient(180deg, #facc15, #eab308)",
-  "avatar5-mobile.png": "linear-gradient(180deg, #facc15, #eab308)",
   "avatar6.png": "linear-gradient(180deg, #ec4899, #db2777)",
-  "avatar6-mobile.png": "linear-gradient(180deg, #ec4899, #db2777)",
   "avatar7.png": "linear-gradient(180deg, #6b7280, #4b5563)",
-  "avatar7-mobile.png": "linear-gradient(180deg, #6b7280, #4b5563)",
   "avatar8.png": "linear-gradient(180deg, #f97316, #ea580c)",
-  "avatar8-mobile.png": "linear-gradient(180deg, #f97316, #ea580c)",
 };
 
+const getAvatarSrc = (avatarKey) => {
+  if (!avatarKey) return "";
+  return `${import.meta.env.BASE_URL}avatars/${avatarKey}.png`;
+};
+
+const getAvatarFileName = (avatarKey) => {
+  if (!avatarKey) return "";
+  return `${avatarKey}.png`;
+};
+
+const getAvatarBg = (avatarKey) => {
+  return (
+    avatarColorMap[getAvatarFileName(avatarKey)] ||
+    "linear-gradient(180deg, #6b7280, #4b5563)"
+  );
+};
   
 
   const leaveRoom = () => {
@@ -176,27 +184,16 @@ function App() {
   };
 
 
- const avatars = isMobile
-  ? [
-      `${import.meta.env.BASE_URL}avatars/avatar1-mobile.png`,
-      `${import.meta.env.BASE_URL}avatars/avatar2-mobile.png`,
-      `${import.meta.env.BASE_URL}avatars/avatar3-mobile.png`,
-      `${import.meta.env.BASE_URL}avatars/avatar4-mobile.png`,
-      `${import.meta.env.BASE_URL}avatars/avatar5-mobile.png`,
-      `${import.meta.env.BASE_URL}avatars/avatar6-mobile.png`,
-      `${import.meta.env.BASE_URL}avatars/avatar7-mobile.png`,
-      `${import.meta.env.BASE_URL}avatars/avatar8-mobile.png`,
-    ]
-  : [
-      `${import.meta.env.BASE_URL}avatars/avatar1.png`,
-      `${import.meta.env.BASE_URL}avatars/avatar2.png`,
-      `${import.meta.env.BASE_URL}avatars/avatar3.png`,
-      `${import.meta.env.BASE_URL}avatars/avatar4.png`,
-      `${import.meta.env.BASE_URL}avatars/avatar5.png`,
-      `${import.meta.env.BASE_URL}avatars/avatar6.png`,
-      `${import.meta.env.BASE_URL}avatars/avatar7.png`,
-      `${import.meta.env.BASE_URL}avatars/avatar8.png`,
-    ];
+  const avatars = [
+  "avatar1",
+  "avatar2",
+  "avatar3",
+  "avatar4",
+  "avatar5",
+  "avatar6",
+  "avatar7",
+  "avatar8",
+];
   
   const allReady =
     players.length >= 3 && players.every((player) => player.ready);
@@ -1422,15 +1419,13 @@ function App() {
                   alignItems: "center",
                   justifyContent: "center",
                   overflow: "hidden",
-                  background:
-                    avatarColorMap[avatars[avatarIndex]?.split("/").pop()] ||
-                    "linear-gradient(180deg, #6b7280, #4b5563)",
+                  background: getAvatarBg(avatars[avatarIndex]),
                   margin: "0 auto",
                 }}
               >
                 <img
-                  src={avatars[avatarIndex]}
-                  alt="avatar"
+                   src={getAvatarSrc(avatars[avatarIndex])}
+                   alt="avatar"
                   style={{
                     //maxHeight: isMobile ? createMobile.avatarImageMax : 250,
                     //maxWidth: isMobile ? createMobile.avatarImageMax : 250,
@@ -3000,9 +2995,7 @@ if (mode === "join" && !roomCode) {
             border: "4px solid #111",
             borderRadius: isMobile ? 10 : 16,
             overflow: "hidden",
-            background:
-              avatarColorMap[player.avatar?.split("/").pop()] ||
-              "linear-gradient(180deg, #6b7280, #4b5563)",
+            background: getAvatarBg(player.avatar),
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -3011,7 +3004,7 @@ if (mode === "join" && !roomCode) {
           }}
         >
           <img
-            src={player.avatar}
+            src={getAvatarSrc(player.avatar)}            
             alt={player.name}
             style={{
               height: avatarSize,
@@ -3307,21 +3300,13 @@ if (mode === "join" && !roomCode) {
   const currentPlayer =
     players.find((player) => player.id === socket.id) || null;
 
-  const currentAvatarKey = currentPlayer?.avatar?.split("/").pop();
+  const currentPlayerColor = getAvatarBg(currentPlayer?.avatar);
 
-  const currentPlayerColor =
-    avatarColorMap[currentAvatarKey] ||
-    "linear-gradient(180deg, #6b7280, #4b5563)";
+const playerColorMap = {};
 
-  const playerColorMap = {};
-
-  players.forEach((p) => {
-    const avatarKey = p.avatar?.split("/").pop();
-
-    playerColorMap[p.id] =
-      avatarColorMap[avatarKey] ||
-      "linear-gradient(180deg, #6b7280, #4b5563)";
-  });
+players.forEach((p) => {
+  playerColorMap[p.id] = getAvatarBg(p.avatar);
+});
 
   const mole = moleId ? players.find((p) => p.id === moleId) || null : null;
 
@@ -3380,8 +3365,8 @@ if (mode === "join" && !roomCode) {
             }}
           >
             <img
-              src={currentPlayer.avatar}
-              alt={currentPlayer.name}
+  src={getAvatarSrc(currentPlayer.avatar)}
+  alt={currentPlayer.name}
               style={{
                 width: "100%",
                 height: "100%",
@@ -3412,12 +3397,12 @@ if (mode === "join" && !roomCode) {
       <div
         style={{
           position: "absolute",
-          top: isMobile ? 56 : 24,
+          top: isMobile ? 46 : 34,
           left: "50%",
           transform: "translateX(-50%)",
           padding: isMobile ? "8px 16px" : "14px 40px",
           borderRadius: 14,
-          background: "#111",
+          background: currentPlayerColor,
           color: "#fff",
           fontSize: isMobile ? 16 : 32,
           fontWeight: 900,
@@ -3434,13 +3419,13 @@ if (mode === "join" && !roomCode) {
       <div
         style={{
           position: "absolute",
-          top: isMobile ? 108 : 28,
+          top: isMobile ? 108 : 188,
           right: isMobile ? 10 : 28,
           minWidth: isMobile ? 98 : 150,
           height: isMobile ? 40 : 56,
           padding: "0 12px",
           borderRadius: 12,
-          background: "linear-gradient(180deg, #1678ff, #0a5bd3)",
+          background: currentPlayerColor,
           border: "3px solid #111",
           boxShadow: "0 4px 0 #111",
           color: "#fff",
@@ -3463,7 +3448,7 @@ if (mode === "join" && !roomCode) {
           display: "flex",
           justifyContent: "center",
           alignItems: "flex-start",
-          paddingTop: isMobile ? 160 : 120,
+          paddingTop: isMobile ? 180 : 220,
           boxSizing: "border-box",
         }}
       >
@@ -3567,7 +3552,7 @@ if (mode === "join" && !roomCode) {
                 }}
               >
                 <img
-                  src={mole.avatar}
+                  src={getAvatarSrc(mole.avatar)}
                   alt={mole.name}
                   style={{
                     width: "100%",
@@ -3670,7 +3655,7 @@ if (mode === "join" && !roomCode) {
                   >
                     {player.avatar ? (
                       <img
-                        src={player.avatar}
+                        src={getAvatarSrc(player.avatar)}
                         alt={player.name}
                         style={{
                           width: "100%",
@@ -3845,21 +3830,13 @@ if (mode === "join" && !roomCode) {
   const currentPlayer =
     players.find((player) => player.id === socket.id) || null;
 
-  const currentAvatarKey = currentPlayer?.avatar?.split("/").pop();
-
-  const currentPlayerColor =
-    avatarColorMap[currentAvatarKey] ||
-    "linear-gradient(180deg, #6b7280, #4b5563)";
+  const currentPlayerColor = getAvatarBg(currentPlayer?.avatar);
 
   const playerColorMap = {};
 
-  players.forEach((p) => {
-    const avatarKey = p.avatar?.split("/").pop();
-
-    playerColorMap[p.id] =
-      avatarColorMap[avatarKey] ||
-      "linear-gradient(180deg, #6b7280, #4b5563)";
-  });
+players.forEach((p) => {
+  playerColorMap[p.id] = getAvatarBg(p.avatar);
+});
 
   const selectionPlayers =
     questionType === "select_player"
@@ -3911,7 +3888,7 @@ if (mode === "join" && !roomCode) {
               }}
             >
               <img
-                src={currentPlayer.avatar}
+                src={getAvatarSrc(currentPlayer.avatar)}
                 alt={currentPlayer.name}
                 style={{
                   width: "100%",
@@ -3952,7 +3929,7 @@ if (mode === "join" && !roomCode) {
             transform: "translateX(-50%)",
             padding: isMobile ? "8px 16px" : "14px 40px",
             borderRadius: 14,
-            background: "#111",
+            background: currentPlayerColor,
             color: "#fff",
             fontSize: isMobile ? 16 : 32,
             fontWeight: 900,
@@ -3969,13 +3946,13 @@ if (mode === "join" && !roomCode) {
         <div
           style={{
             position: "absolute",
-            top: isMobile ? 108 : 28,
+            top: isMobile ? 108 : 208,
             right: isMobile ? 10 : 28,
             minWidth: isMobile ? 98 : 150,
             height: isMobile ? 40 : 56,
             padding: "0 12px",
             borderRadius: 12,
-            background: "linear-gradient(180deg, #1678ff, #0a5bd3)",
+            background: currentPlayerColor,
             border: "3px solid #111",
             boxShadow: "0 4px 0 #111",
             color: "#fff",
@@ -4026,13 +4003,14 @@ if (mode === "join" && !roomCode) {
             display: "flex",
             justifyContent: "center",
             alignItems: "flex-start",
-            paddingTop: isMobile ? 250 : 110,
+            paddingTop: isMobile ? 250 : 180,
             boxSizing: "border-box",
           }}
         >
           <div
             style={{
               width: isMobile ? "100%" : "min(760px, 72vw)",
+              top: isMobile ? 1 : 180,
               maxWidth: isMobile ? 420 : "unset",
               minHeight: isMobile ? "unset" : 640,
               background: "#ECECEC",
@@ -4246,13 +4224,9 @@ if (mode === "join" && !roomCode) {
             }}
           >
             <img
-              src={currentPlayer.avatar}
+              src={getAvatarSrc(currentPlayer.avatar)}
               alt={currentPlayer.name}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-              }}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </div>
 
@@ -4300,7 +4274,7 @@ if (mode === "join" && !roomCode) {
       <div
         style={{
           position: "absolute",
-          top: isMobile ? 108 : 100,
+          top: isMobile ? 108 : 198,
           right: isMobile ? 10 : 28,
           minWidth: isMobile ? 98 : 150,
           height: isMobile ? 40 : 56,
@@ -4768,20 +4742,12 @@ if (gameStarted && phase === "MOLE_VOTING") {
   const currentPlayer =
     players.find((player) => player.id === socket.id) || null;
 
-  const currentAvatarKey = currentPlayer?.avatar?.split("/").pop();
-
-  const currentPlayerColor =
-    avatarColorMap[currentAvatarKey] ||
-    "linear-gradient(180deg, #6b7280, #4b5563)";
+  const currentPlayerColor = getAvatarBg(currentPlayer?.avatar);
 
   const playerColorMap = {};
 
   players.forEach((p) => {
-    const avatarKey = p.avatar?.split("/").pop();
-
-    playerColorMap[p.id] =
-      avatarColorMap[avatarKey] ||
-      "linear-gradient(180deg, #6b7280, #4b5563)";
+    playerColorMap[p.id] = getAvatarBg(p.avatar);
   });
 
   const voteMap = {};
@@ -4840,7 +4806,7 @@ if (gameStarted && phase === "MOLE_VOTING") {
             }}
           >
             <img
-              src={currentPlayer.avatar}
+              src={getAvatarSrc(currentPlayer.avatar)}
               alt={currentPlayer.name}
               style={{
                 width: "100%",
@@ -4877,14 +4843,14 @@ if (gameStarted && phase === "MOLE_VOTING") {
           transform: "translateX(-50%)",
           padding: isMobile ? "8px 16px" : "14px 40px",
           borderRadius: 14,
-          background: "#111",
+          background: currentPlayerColor,
           color: "#fff",
           fontSize: isMobile ? 16 : 32,
           fontWeight: 900,
           letterSpacing: isMobile ? 1 : 6,
           textTransform: "uppercase",
           border: "3px solid #111",
-          boxShadow: "0 4px 0 #111",
+              boxShadow: "0 4px 0 #111",
           zIndex: 3,
         }}
       >
@@ -4894,13 +4860,13 @@ if (gameStarted && phase === "MOLE_VOTING") {
       <div
         style={{
           position: "absolute",
-          top: isMobile ? 108 : 28,
+          top: isMobile ? 108 : 208,
           right: isMobile ? 10 : 28,
           minWidth: isMobile ? 98 : 150,
           height: isMobile ? 40 : 56,
           padding: "0 12px",
           borderRadius: 12,
-          background: "linear-gradient(180deg, #1678ff, #0a5bd3)",
+          background: currentPlayerColor,
           border: "3px solid #111",
           boxShadow: "0 4px 0 #111",
           color: "#fff",
@@ -5087,7 +5053,7 @@ if (gameStarted && phase === "MOLE_VOTING") {
                             }}
                           >
                             <img
-                              src={voter.avatar}
+                              src={getAvatarSrc(voter.avatar)}
                               alt={voter.name}
                               style={{
                                 width: "100%",
@@ -5146,21 +5112,13 @@ if (gameStarted && phase === "MOLE_VOTING") {
   const currentPlayer =
     players.find((player) => player.id === socket.id) || null;
 
-  const currentAvatarKey = currentPlayer?.avatar?.split("/").pop();
+  const currentPlayerColor = getAvatarBg(currentPlayer?.avatar);
 
-  const currentPlayerColor =
-    avatarColorMap[currentAvatarKey] ||
-    "linear-gradient(180deg, #6b7280, #4b5563)";
+const playerColorMap = {};
 
-  const playerColorMap = {};
-
-  players.forEach((p) => {
-    const avatarKey = p.avatar?.split("/").pop();
-
-    playerColorMap[p.id] =
-      avatarColorMap[avatarKey] ||
-      "linear-gradient(180deg, #6b7280, #4b5563)";
-  });
+players.forEach((p) => {
+  playerColorMap[p.id] = getAvatarBg(p.avatar);
+});
 
   const sortedPlayers = [...players].sort((a, b) => {
     const scoreDiff = (b.score || 0) - (a.score || 0);
@@ -5218,8 +5176,8 @@ if (gameStarted && phase === "MOLE_VOTING") {
             }}
           >
             <img
-              src={currentPlayer.avatar}
-              alt={currentPlayer.name}
+  src={getAvatarSrc(currentPlayer.avatar)}
+  alt={currentPlayer.name}
               style={{
                 width: "100%",
                 height: "100%",
@@ -5250,12 +5208,12 @@ if (gameStarted && phase === "MOLE_VOTING") {
       <div
         style={{
           position: "absolute",
-          top: isMobile ? 56 : 24,
+          top: isMobile ? 36 : 54,
           left: "50%",
           transform: "translateX(-50%)",
           padding: isMobile ? "8px 16px" : "14px 40px",
           borderRadius: 14,
-          background: "#111",
+          background: currentPlayerColor,
           color: "#fff",
           fontSize: isMobile ? 16 : 32,
           fontWeight: 900,
@@ -5276,7 +5234,7 @@ if (gameStarted && phase === "MOLE_VOTING") {
           display: "flex",
           justifyContent: "center",
           alignItems: "flex-start",
-          paddingTop: isMobile ? 160 : 100,
+          paddingTop: isMobile ? 180 : 250,
           boxSizing: "border-box",
         }}
       >
@@ -5349,7 +5307,7 @@ if (gameStarted && phase === "MOLE_VOTING") {
                   }}
                 >
                   <img
-                    src={winner.avatar}
+                    src={getAvatarSrc(winner.avatar)}
                     alt={winner.name}
                     style={{
                       width: "100%",
@@ -5481,7 +5439,7 @@ if (gameStarted && phase === "MOLE_VOTING") {
                     >
                       {player.avatar ? (
                         <img
-                          src={player.avatar}
+                          src={getAvatarSrc(player.avatar)}
                           alt={player.name}
                           style={{
                             width: "100%",
@@ -5591,11 +5549,7 @@ if (gameStarted && phase === "WORD_HUNT") {
   const isMyTurn = currentTurnPlayer?.id === socket.id;
   const me = players.find((p) => p.id === socket.id);
 
-  const currentAvatarKey = me?.avatar?.split("/").pop();
-
-  const currentPlayerColor =
-    avatarColorMap[currentAvatarKey] ||
-    "linear-gradient(180deg, #6b7280, #4b5563)";
+  const currentPlayerColor = getAvatarBg(me?.avatar);
 
   return (
     <div
@@ -5643,7 +5597,7 @@ if (gameStarted && phase === "WORD_HUNT") {
         >
           {me?.avatar && (
             <img
-              src={me.avatar}
+              src={getAvatarSrc(me.avatar)}
               alt={me.name}
               style={{
                 width: "100%",
@@ -5855,9 +5809,7 @@ if (gameStarted && phase === "WORD_HUNT") {
                 (s) => s.playerId === player.id
               );
 
-              const playerBg =
-                avatarColorMap[player.avatar?.split("/").pop()] ||
-                "linear-gradient(180deg, #6b7280, #4b5563)";
+              const playerBg = getAvatarBg(player.avatar);
 
               const isCurrentTurn = currentTurnPlayer?.id === player.id;
 
@@ -6016,11 +5968,7 @@ if (gameStarted && questionType === "select_player") {
   const currentPlayer =
     players.find((player) => player.id === socket.id) || null;
 
-  const currentAvatarKey = currentPlayer?.avatar?.split("/").pop();
-
-  const currentPlayerColor =
-    avatarColorMap[currentAvatarKey] ||
-    "linear-gradient(180deg, #6b7280, #4b5563)";
+  const currentPlayerColor = getAvatarBg(currentPlayer?.avatar);
 
   return (
     <div
@@ -6062,7 +6010,7 @@ if (gameStarted && questionType === "select_player") {
             }}
           >
             <img
-              src={currentPlayer.avatar}
+              src={getAvatarSrc(currentPlayer.avatar)}
               alt={currentPlayer.name}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
@@ -6075,6 +6023,7 @@ if (gameStarted && questionType === "select_player") {
               borderRadius: 10,
               background: currentPlayerColor,
               border: "3px solid #111",
+              boxShadow: "0 4px 0 #111",
               color: "#fff",
               fontWeight: 900,
             }}
@@ -6094,6 +6043,8 @@ if (gameStarted && questionType === "select_player") {
           fontSize: isMobile ? 16 : 32,
           borderRadius: 14,
           background: currentPlayerColor,
+          border: "3px solid #111",
+              boxShadow: "0 4px 0 #111",
           color: "#fff",
           fontWeight: 900,
           zIndex: 3,
@@ -6113,6 +6064,7 @@ if (gameStarted && questionType === "select_player") {
           borderRadius: 14,
           background: "#f9162a",
           border: "3px solid #111",
+              boxShadow: "0 4px 0 #111",
           color: "#fff",
           fontSize: isMobile ? 18 : 30,
           fontWeight: 900,
@@ -6306,7 +6258,7 @@ if (gameStarted && questionType === "select_player") {
                     }}
                   >
                     <img
-                      src={player.avatar}
+                      src={getAvatarSrc(player.avatar)}
                       alt={player.name}
                       style={{
                         width: "100%",
@@ -6343,11 +6295,7 @@ if (gameStarted && questionType === "select_player") {
   if (gameStarted && questionType === "yes_no" && phase === "QUESTION") {
   const me = players.find((p) => p.id === socket.id);
 
-  const currentAvatarKey = me?.avatar?.split("/").pop();
-
-  const currentPlayerColor =
-    avatarColorMap[currentAvatarKey] ||
-    "linear-gradient(180deg, #6b7280, #4b5563)";
+  const currentPlayerColor = getAvatarBg(me?.avatar);
 
   return (
     <div
@@ -6390,7 +6338,7 @@ if (gameStarted && questionType === "select_player") {
             }}
           >
             <img
-              src={me.avatar}
+              src={getAvatarSrc(me.avatar)}
               alt={me.name}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
@@ -6403,6 +6351,7 @@ if (gameStarted && questionType === "select_player") {
               borderRadius: 10,
               background: currentPlayerColor,
               border: "3px solid #111",
+              boxShadow: "0 4px 0 #111",
               color: "#fff",
               fontWeight: 900,
             }}
@@ -6424,6 +6373,8 @@ if (gameStarted && questionType === "select_player") {
           borderRadius: 14,
           background: currentPlayerColor,
           color: "#fff",
+          border: "3px solid #111",
+              boxShadow: "0 4px 0 #111",
           fontWeight: 900,
           zIndex: 3,
         }}
@@ -6443,6 +6394,7 @@ if (gameStarted && questionType === "select_player") {
           borderRadius: 14,
           background: "#f9162a",
           border: "3px solid #111",
+              boxShadow: "0 4px 0 #111",
           color: "#fff",
           fontSize: isMobile ? 18 : 30,
           fontWeight: 900,
@@ -6466,6 +6418,7 @@ if (gameStarted && questionType === "select_player") {
           borderRadius: 12,
           background: currentPlayerColor,
           border: "3px solid #111",
+              boxShadow: "0 4px 0 #111",
           color: "#fff",
           fontSize: isMobile ? 14 : 22,
           fontWeight: 900,
@@ -6627,11 +6580,7 @@ if (gameStarted && questionType === "select_player") {
             const currentPlayer =
               players.find((player) => player.id === socket.id) || null;
           
-            const currentAvatarKey = currentPlayer?.avatar?.split("/").pop();
-          
-            const currentPlayerColor =
-              avatarColorMap[currentAvatarKey] ||
-              "linear-gradient(180deg, #6b7280, #4b5563)";
+            const currentPlayerColor = getAvatarBg(currentPlayer?.avatar);
           
             return (
              <div
@@ -6674,7 +6623,7 @@ if (gameStarted && questionType === "select_player") {
         }}
       >
         <img
-          src={currentPlayer.avatar}
+          src={getAvatarSrc(currentPlayer.avatar)}
           alt={currentPlayer.name}
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
@@ -6687,6 +6636,7 @@ if (gameStarted && questionType === "select_player") {
           borderRadius: 10,
           background: currentPlayerColor,
           border: "3px solid #111",
+              boxShadow: "0 4px 0 #111",
           color: "#fff",
           fontWeight: 900,
         }}
@@ -6708,6 +6658,8 @@ if (gameStarted && questionType === "select_player") {
       borderRadius: 14,
       background: currentPlayerColor,
       color: "#fff",
+      border: "3px solid #111",
+              boxShadow: "0 4px 0 #111",
       fontWeight: 900,
       zIndex: 3,
     }}
@@ -6727,6 +6679,7 @@ if (gameStarted && questionType === "select_player") {
       borderRadius: 14,
       background: "#f9162a",
       border: "3px solid #111",
+              boxShadow: "0 4px 0 #111",
       color: "#fff",
       fontSize: isMobile ? 18 : 30,
       fontWeight: 900,
